@@ -9,8 +9,8 @@ class Node:
             if type(n) is not Node:
                 print('Node init error - declared neighbor is not a Node!')
                 return
-        self.myNeighbors = myNeighbors
-        self.myValue = myValue
+        self.neighbors = myNeighbors
+        self.value = myValue
         for n in myNeighbors:
             n.addNeighbor(self)
 
@@ -18,21 +18,37 @@ class Node:
         if type(newNeighbor) is not Node:
             print('Node modification error - declared new neighbor is not a Node!')
             return
-        if newNeighbor not in self.myNeighbors:
-            self.myNeighbors.append(newNeighbor)
+        if newNeighbor not in self.neighbors:
+            self.neighbors.append(newNeighbor)
 
     def removeNeighbor(self, oldNeighbor):
-        if oldNeighbor not in self.myNeighbors:
+        if oldNeighbor not in self.neighbors:
             print('Node modification error - requested neighbor does not exist!')
             return
-        self.myNeighbors.remove(oldNeighbor)
+        self.neighbors.remove(oldNeighbor)
 
     def getNeighbors(self):
-        for n in self.myNeighbors:
-            print(n.value())
+        for n in self.neighbors:
+            print(n.value)
 
-    def value(self):
-        return self.myValue
+    def __populate(self, myUnvisited):
+        if self not in myUnvisited:
+            myUnvisited.append(self)
+            for n in self.neighbors:
+                myUnvisited = n.__populate(myUnvisited)
+        return myUnvisited
+
+    def distance(self, otherNode):
+        if otherNode.value == self.value:
+            print("Well, that's easy.  The distance is zero!")
+        else:  # calculate distance via Dijkstra's algorithm
+            unvisited = []  # list of connected nodes in the graph, to be searched in the distance-finding algorithm.
+            unvisited = self.__populate(unvisited)  # populating this list recursively
+
+            print('The graph has these nodes:')
+            for n in unvisited:  # searching the graph...
+                print(n.value)
+            print('The distance between node',self.value,'and node',otherNode.value,'is','undefined','.')
 
 
 #
@@ -51,3 +67,6 @@ node3 = Node(3, [node1, node2])
 node4 = Node(4, [node0, node1, node3])
 
 node0.getNeighbors()
+
+# %%
+node2.distance(node4)
